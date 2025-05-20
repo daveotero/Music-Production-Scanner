@@ -11,3 +11,5 @@ export const TOKEN_PRESENT_DELAY_MS = 1100; // Delay if Discogs token is present
 export const NO_TOKEN_DELAY_MS = 3000;    // Delay if no Discogs token
 // Fetch up to this many *additional* versions if key release lacks credits for the target artist.
 export const MAX_ADDITIONAL_VERSIONS_FOR_CREDITS = 2;
+
+export const APP_VERSION = '0.1.0-alpha';
