@@ -128,7 +128,7 @@ function updateMainHeading(artistName = null) {
             elements.mainHeading.innerHTML =
                 `<a href="https://www.discogs.com/artist/${state.currentArtistId}" target="_blank" rel="noopener noreferrer" title="View ${escapeHtml(artistName)} on Discogs">${escapeHtml(artistName)}</a>'s Production Scanner`;
         } else if (artistName) {
-            elements.mainHeading.textContent = `${artistName}'s Production Scanner`;
+            elements.mainHeading.textContent = `${artistName} Production Scanner`;
         } else {
             elements.mainHeading.textContent = 'Music Production Scanner';
         }
