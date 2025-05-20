@@ -463,6 +463,7 @@ select.form-control { padding: var(--space-8) var(--space-12); -webkit-appearanc
 .table th, .table td { 
   color: var(--color-text); 
   background-color: transparent; 
+  padding: var(--space-8) var(--space-12); /* Top/Bottom: 12px, Left/Right: 8px */
   border-color: var(--color-border); 
 }
 .table-striped>tbody>tr:nth-of-type(odd) {
