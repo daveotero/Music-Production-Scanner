@@ -126,7 +126,7 @@ function updateMainHeading(artistName = null) {
     if (elements.mainHeading) {
         if (artistName && state.currentArtistId) {
             elements.mainHeading.innerHTML =
-                `<a href="https://www.discogs.com/artist/${state.currentArtistId}" target="_blank" rel="noopener noreferrer" title="View ${escapeHtml(artistName)} on Discogs">${escapeHtml(artistName)}</a>'s Production Scanner`;
+                `<a href="https://www.discogs.com/artist/${state.currentArtistId}" target="_blank" rel="noopener noreferrer" title="View ${escapeHtml(artistName)} on Discogs">${escapeHtml(artistName)}</a> Production Scanner`;
         } else if (artistName) {
             elements.mainHeading.textContent = `${artistName} Production Scanner`;
         } else {
