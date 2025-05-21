@@ -6,7 +6,7 @@ The **Music Production Scanner** is a web-based tool designed to help users, par
 
 The application is built with vanilla JavaScript, HTML, and CSS, utilizing Bootstrap for some basic styling and layout components, and localforage for client-side caching of fetched data.
 
-## **Purpose / Why This App?**
+## **Why Did I Build This?**
 
 Discogs is an invaluable resource for music information, but consolidating detailed production credits for a specific artist can be challenging. Master releases (which group various versions of an album or single) often don't display the granular credit information. These crucial details are typically nested within specific versions of a release and can be inconsistently organized or incomplete across different pressings.
 
@@ -50,47 +50,22 @@ Essentially, it automates the often tedious process of hunting down and compilin
   * **Offline Data Management**: Data can be curated or modified offline in a CSV editor and then imported back into the application.
   * **Data Seeding**: Quickly set up the application with known data, bypassing initial API interactions for that dataset.
 * **Cache Management:** Option to clear all cached data for the currently selected artist.
-* **Flexible Artist ID Input:** Accepts both plain numeric Discogs Artist IDs (e.g., 305403\) and the format copied from Discogs URLs (e.g., \[a305403\]).
+* **Flexible Artist ID Input:** Accepts both plain numeric Discogs Artist IDs (e.g., 305403) and the format copied from Discogs URLs (e.g., [a305403]).
 * **Clickable Artist Name:** The main heading dynamically links to the artist's page on Discogs once an artist is successfully loaded.
 
-## **Getting Started**
+## **Getting Started (Using the Web App)**
 
-This is a client-side web application. The easiest way to use it is by visiting the Github Pages version:
+The easiest way to use the Music Production Scanner is by visiting the hosted version on GitHub Pages. This is a client-side web application that runs directly in your browser.
 
 **[Access the Music Production Scanner Here](https://daveotero.github.io/Music-Production-Scanner/)**
 
-Due to browser security restrictions with local file access (`file:///`) for JavaScript modules, opening the `index.html` file directly from your computer will likely not work. For local development or running from source, a local web server is required.
+Simply open the link in a modern web browser with an internet connection to start using the application.
 
-* A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
-* Internet connection (for fetching data from Discogs).
+## **Running Locally (For Developers)**
 
-### **Files**
+If you wish to run the application code locally for development or testing, you will need a local web server. Due to browser security restrictions with local file access (`file:///`) for JavaScript modules, opening the `index.html` file directly from your computer will likely not work.
 
-The application is structured into a main application file and several smaller modules for better organization and maintainability.
-
-* `index.html`: The main HTML structure of the application.
-* `style.css`: Contains all the custom styles and theme information.
-* `app.js`: The main application file. It handles initialization, user settings, event listeners, UI updates, and orchestrates calls to the various service modules.
-
-The core logic is broken down into modules located in the `./modules` directory:
-
-* `./modules/constants.js`: Defines application-wide constants (API URLs, cache keys, delays, etc.).
-* `./modules/domElements.js`: Centralizes the selection of key DOM elements.
-* `./modules/state.js`: Manages the application's global state object and related state-updating functions.
-* `./modules/utils.js`: Contains generic utility functions (logging, HTML escaping, delays, name variant generation, cache key generation).
-* `./modules/apiService.js`: Handles direct interactions with the Discogs API, including the retry logic for fetches.
-* `./modules/scanService.js`: Contains the core logic for fetching artist items, processing release/master details, aggregating credits, deduplicating data, and managing the scan lifecycle and retry queue.
-* `./modules/importService.js`: Handles the parsing and validation of imported CSV data.
-
-This modular structure helps separate concerns, making the code easier to read, test, and maintain.
-
-## **Installation / Setup**
-
-The application is designed to be run directly from the web.
-
-1. **Primary Method:** Visit https://daveotero.github.io/Music-Production-Scanner/ in your web browser.
-
-For developers wishing to run the code locally:
+To run locally:
 
 1. Clone or download the repository.
 2. Serve the project directory using a local web server (e.g., Python's `http.server`, Node.js's `http-server` or `live-server`).
@@ -101,7 +76,7 @@ For developers wishing to run the code locally:
 1. **Open the application in your browser** (preferably via the hosted link).
 2. **Enter Discogs Artist ID:**
    * In the "Discogs Artist ID" field, enter the numeric ID of the artist you want to scan (e.g., 305403).
-   * You can also paste the ID in the format \[a305403\] (as copied from some Discogs URLs). The application will parse it automatically.
+   * You can also paste the ID in the format [a305403] (as copied from some your Discogs artist page). The application will parse it automatically.
 3. **Enter Discogs Personal Access Token (Recommended):**
    * To benefit from higher API rate limits (60 requests/minute vs. 25 without a token), generate a Personal Access Token from your Discogs account settings: [Discogs Developer Settings](https://www.discogs.com/settings/developers).
    * Enter this token into the "Discogs Personal Access Token" field.
@@ -134,6 +109,26 @@ For developers wishing to run the code locally:
 
 These settings are saved locally in your browser via localforage.
 
+## **Structure**
+
+The application is structured into a main application file and several smaller modules for better organization and maintainability.
+
+* [`index.html`](index.html): The main HTML structure of the application.
+* [`style.css`](style.css): Contains all the custom styles and theme information.
+* [`app.js`](app.js): The main application file. It handles initialization, user settings, event listeners, UI updates, and orchestrates calls to the various service modules.
+
+The core logic is broken down into modules located in the `./modules` directory:
+
+* [`./modules/constants.js`](modules/constants.js): Defines application-wide constants (API URLs, cache keys, delays, etc.).
+* [`./modules/domElements.js`](modules/domElements.js): Centralizes the selection of key DOM elements.
+* [`./modules/state.js`](modules/state.js): Manages the application's global state object and related state-updating functions.
+* [`./modules/utils.js`](modules/utils.js): Contains generic utility functions (logging, HTML escaping, delays, name variant generation, cache key generation).
+* [`./modules/apiService.js`](modules/apiService.js): Handles direct interactions with the Discogs API, including the retry logic for fetches.
+* [`./modules/scanService.js`](modules/scanService.js): Contains the core logic for fetching artist items, processing release/master details, aggregating credits, deduplicating data, and managing the scan lifecycle and retry queue.
+* [`./modules/importService.js`](modules/importService.js): Handles the parsing and validation of imported CSV data.
+
+This modular structure helps separate concerns, making the code easier to read, test, and maintain.
+
 ## **How It Works (Overview)**
 
 1. **Initial Setup:** User provides Artist ID and (optionally) a Discogs token. These are saved.
@@ -149,11 +144,11 @@ These settings are saved locally in your browser via localforage.
          2. Identifies the main\_release (Key Release) ID from the master data.
          3. Fetches the Key Release data from /releases/{key\_release\_id}.
          4. Checks if the Key Release contains any production credits for the target artist (using hasTargetArtistCredits).
-         5. If **no credits** are found in the Key Release, it fetches up to MAX\_ADDITIONAL\_VERSIONS\_FOR\_CREDITS (e.g., 2\) other versions from the master's versions list (/masters/{master\_id}/versions).
+         5. If **no credits** are found in the Key Release, it fetches up to MAX\_ADDITIONAL\_VERSIONS\_FOR\_CREDITS (e.g., 2) other versions from the master's versions list (/masters/{master\_id}/versions).
          6. The processApiData function then combines information:
             * Master data for overall title, artist, master year.
             * Key Release data (if available) for specific label, year, artwork.
-            * Aggregates production credits from *all* fetched versions (Key Release \+ any additional versions).
+            * Aggregates production credits from *all* fetched versions (Key Release + any additional versions).
        * If it's a **Specific Release** (type: "release"):
          1. Fetches the release data directly from /releases/{release\_id}.
          2. processApiData extracts details and credits from this single release.
@@ -169,7 +164,7 @@ These settings are saved locally in your browser via localforage.
 ## **Styling**
 
 * The application uses **Bootstrap 5.3** for its foundational layout, grid system, and some component styling (like buttons, progress bar, alerts).
-* Custom styles are defined in style.css to:
+* Custom styles are defined in [`style.css`](style.css) to:
   * Implement a light/dark theme based on user's system preference or a data-color-scheme attribute.
   * Override Bootstrap defaults where necessary.
   * Style custom components like cards, sortable table headers, artwork thumbnails, and the artwork modal.
