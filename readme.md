@@ -174,8 +174,14 @@ This modular structure helps separate concerns, making the code easier to read, 
 
 * **Robust Credits Parsing:** Improve credits parsing and standardization to support more contribution types and better handle edge cases.
 
+## **Created By**
+
+This tool was created by **Dave Otero**, a music producer and mixing engineer at [Flatline Audio](https://flatlineaudio.com) in Denver, Colorado. 🤘
+
+You can check out his production credits on [Muso.AI](https://credits.muso.ai/profile/57c9077d-c4b1-4bbc-b057-0ac2231968eb).
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S41FAAEJ)
 ## **License**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S41FAAEJ)
