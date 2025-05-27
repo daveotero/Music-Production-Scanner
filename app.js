@@ -6,7 +6,7 @@
 // - Dynamic rate limiting based on token presence.
 // - In-page modal for artwork.
 
-import { CACHE_KEYS, DISCOGS_BASE_URL, TOKEN_PRESENT_DELAY_MS, NO_TOKEN_DELAY_MS, MAX_ADDITIONAL_VERSIONS_FOR_CREDITS } from './modules/constants.js';
+import { CACHE_KEYS, DISCOGS_BASE_URL, TOKEN_PRESENT_DELAY_MS, NO_TOKEN_DELAY_MS, MAX_ADDITIONAL_VERSIONS_FOR_CREDITS, APP_VERSION } from './modules/constants.js';
 import { elements } from './modules/domElements.js';
 import { state, updateTargetArtistNameVariants } from './modules/state.js';
 import { log, escapeHtml, delay, generateNameVariants, getArtistCacheKey } from './modules/utils.js';
@@ -178,6 +178,11 @@ async function init() {
   if (state.currentArtistId) {
     await loadCachedDataForCurrentArtist();
   } else {
+    // Display version even if no artist is loaded
+    const appVersionDisplayElement = document.getElementById('appVersionDisplay');
+    if (appVersionDisplayElement) {
+        appVersionDisplayElement.textContent = `v${APP_VERSION}`;
+    }
     log('Please enter a Discogs Artist ID and your Discogs Token, then click "Save Settings".');
     if(elements.noDataRow) elements.noDataRow.classList.remove('d-none');
   }
@@ -281,6 +286,11 @@ async function loadCachedDataForCurrentArtist() {
     state.releases = []; state.failedQueue = []; state.lastUpdated = null;
     renderReleases(); updateErrorPanel(); updateLastUpdatedText();
     return;
+  }
+  // Display version when loading cached data as well
+  const appVersionDisplayElement = document.getElementById('appVersionDisplay');
+  if (appVersionDisplayElement) {
+      appVersionDisplayElement.textContent = `v${APP_VERSION}`;
   }
   try {
     const [releases, lastUpdated, failedQueue] = await Promise.all([

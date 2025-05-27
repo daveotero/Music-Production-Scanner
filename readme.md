@@ -25,12 +25,14 @@ Essentially, it automates the often tedious process of hunting down and compilin
 * **Intelligent Master/Release Handling:**
   * Identifies master releases and their corresponding "key" (main) versions from Discogs.
   * Prioritizes the key release for primary data (title, artist, label, year, artwork).
-  * Conditionally fetches additional versions of a master release *only if* the key release does not provide production credits for the target artist, optimizing API calls.
-  * Aggregates production credits (Produced, Engineered, Mixed, Mastered) from the key release and any additionally fetched versions to build the most complete credit list.
+  * Conditionally fetches additional versions (up to **5**, defined by `MAX_ADDITIONAL_VERSIONS_FOR_CREDITS`) of a master release *only if* the key release does not provide production credits for the target artist, optimizing API calls.
+  * Aggregates production credits from the key release and any additionally fetched versions to build the most complete credit list.
 * **Deduplication:** Presents a clean, deduplicated list of an artist's works, ensuring that if a master release is displayed (with its aggregated data), its individual versions are not shown separately if they are already represented.
 * **Dynamic Rate Limiting:** Adjusts the delay between Discogs API requests based on the presence of a user-provided Discogs Personal Access Token:
   * With Token: 1.1 seconds per request (approx. 54 requests/minute).
   * Without Token: 3 seconds per request (20 requests/minute).
+* **Summarized Credit Display:** Presents a concise summary of an artist's involvement (e.g., "Produced, Engineered, Mixed, Mastered") for each release, providing a quick overview.
+* **Comprehensive Release Fetching:** Gathers a broader range of an artist's appearances and contributions from Discogs, aiming to include items beyond just their main releases.
 * **Client-Side Caching:** Uses localforage to cache fetched release data, scan status, and user settings in the browser, reducing redundant API calls on subsequent visits for the same artist.
 * **Incremental Updates:** When re-scanning, only fetches releases newer than the latest cached release for the current artist.
 * **Error Handling & Retries:**
@@ -143,8 +145,8 @@ This modular structure helps separate concerns, making the code easier to read, 
          1. Fetches the master data from /masters/{master\_id}.
          2. Identifies the main\_release (Key Release) ID from the master data.
          3. Fetches the Key Release data from /releases/{key\_release\_id}.
-         4. Checks if the Key Release contains any production credits for the target artist (using hasTargetArtistCredits).
-         5. If **no credits** are found in the Key Release, it fetches up to MAX\_ADDITIONAL\_VERSIONS\_FOR\_CREDITS (e.g., 2) other versions from the master's versions list (/masters/{master\_id}/versions).
+         4. Checks if the Key Release contains any production credits for the target artist (using `hasTargetArtistCredits`).
+         5. If **no credits** are found in the Key Release, it fetches up to `MAX_ADDITIONAL_VERSIONS_FOR_CREDITS` (currently **5**) other versions from the master's versions list (/masters/{master\_id}/versions).
          6. The processApiData function then combines information:
             * Master data for overall title, artist, master year.
             * Key Release data (if available) for specific label, year, artwork.
@@ -152,10 +154,10 @@ This modular structure helps separate concerns, making the code easier to read, 
        * If it's a **Specific Release** (type: "release"):
          1. Fetches the release data directly from /releases/{release\_id}.
          2. processApiData extracts details and credits from this single release.
-   * **Data Processing (processApiData, extractArtistRoles, formatArtistRoles):**
+   * **Data Processing (`processApiData`, `extractArtistRoles`, `formatArtistRoles`):**
      * Extracts relevant fields (artist, title, label, year, artwork URL).
-     * Parses the credits and extraartists arrays to identify production roles (Produced, Engineered, Mixed, Mastered) performed by the target artist.
-     * Formats these roles into a readable string.
+     * Parses the `credits` and `extraartists` arrays to identify roles performed by the target artist across various categories.
+     * Formats these roles into a concise, summarized string (e.g., "Produced, Engineered, Mixed").
    * **Deduplication (deduplicateReleases):** After processing a batch of items, this function ensures that if a master release is in the list (which now contains aggregated data from its representative version), the specific release that was chosen as its representative is not also listed as a separate, redundant entry.
    * **Display & Caching:** Processed items are added to the state.releases array, cached using localforage, and rendered in the UI table.
 5. **Rate Limiting:** A delay (state.requestDelayMs) is enforced between primary API calls. This delay is dynamically set based on the presence of a Discogs token. Sub-fetches (like fetching versions for a master) use a shorter, fixed delay.
@@ -170,9 +172,22 @@ This modular structure helps separate concerns, making the code easier to read, 
   * Style custom components like cards, sortable table headers, artwork thumbnails, and the artwork modal.
   * Define a color palette and typography using CSS custom properties (variables).
 
+## Advanced Settings / Configuration Details
+
+While most settings are managed through the UI, some internal constants control specific behaviors. Developers modifying the source code can adjust these:
+
+*   **`MAX_ADDITIONAL_VERSIONS_FOR_CREDITS`**:
+    *   **Purpose**: This constant (defined in `modules/constants.js`) determines the maximum number of additional versions of a master release the scanner will attempt to fetch and process if the primary "key release" for that master does not contain credits for the target artist.
+    *   **Default Value**: `5`
+    *   **Impact**:
+        *   A higher value increases the likelihood of finding comprehensive credits, especially for master releases with many versions where credits might be scattered. However, it can also lead to more API calls to Discogs and potentially longer scan times.
+        *   A lower value will result in faster scans but might miss credits if they are not present in the key release or the first few additional versions checked.
+    *   **Note**: This setting is currently not user-configurable through the UI and requires a code change to modify its value in `modules/constants.js`.
+
 ## **Future Enhancements / To-Do**
 
-* **Robust Credits Parsing:** Improve credits parsing and standardization to support more contribution types and better handle edge cases.
+* **User-Configurable Settings:** Explore making constants like `MAX_ADDITIONAL_VERSIONS_FOR_CREDITS` configurable via the UI.
+* **Detailed Credit View Toggle:** Option to switch between the summarized credit view and a more detailed, categorized view for each release.
 
 ## **Created By**
 
@@ -184,4 +199,3 @@ You can check out his production credits on [Muso.AI](https://credits.muso.ai/pr
 ## **License**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
